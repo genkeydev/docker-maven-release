@@ -2,13 +2,13 @@ FROM alpine:3
 
 RUN apk --update --no-cache add bash maven git openssh gnupg libxml2-utils vim openjdk8 jq
 RUN apk --no-cache add openjdk11 --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community
-RUN apk --update add openjdk14 --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing
-RUN apk --update add openjdk15 --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing
-RUN apk --update add openjdk16 --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing
-RUN apk --update add openjdk17 --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing
 RUN apk add bash gettext
 # Vaadin needs node
 RUN apk add --update nodejs npm
+
+# Install Git LFS
+RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
+RUN apk --no-cache add git-lfs
 
 COPY ./add-ssh-key.sh /usr/local/bin
 COPY ./setup-maven-servers.sh /usr/local/bin
@@ -27,3 +27,9 @@ ARG SETTINGS_FILE="/usr/share/java/maven-3/conf/settings.xml"
 ENV SETTINGS_FILE=$SETTINGS_FILE
 
 RUN mkdir /root/.m2
+
+# Initialize Git LFS
+RUN git lfs install
+
+# Set default command
+CMD ["/bin/bash"]
