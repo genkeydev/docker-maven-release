@@ -5,16 +5,6 @@ echo "Setup /github/workspace as a safe directory"
 # This script will do a release of the artifact according to http://maven.apache.org/maven-release/maven-release-plugin/
 git config --global --add safe.directory /github/workspace
 
-# Install Git LFS if not already installed
-if ! git lfs version &> /dev/null; then
-    echo "Git LFS is not installed. Installing now..."
-    curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
-    apk --no-cache add git-lfs
-fi
-
-# Initialize Git LFS in the repository
-git lfs install
-
 echo "Fetching files with Git LFS"
 git lfs pull
 
@@ -28,9 +18,9 @@ if [[ "${last_release_commit_hash}" = "${CI_COMMIT_SHA}" ]]; then
 fi
 
 if [ -d "${M2_HOME_FOLDER}" ]; then
-     echo "INFO - M2 folder '${M2_HOME_FOLDER}' not empty. We therefore will beneficy from the CI cache"; 
-else 
-     echo "WARN - No M2 folder '${M2_HOME_FOLDER}' found. We therefore won't beneficy from the CI cache"; 
+    echo "INFO - M2 folder '${M2_HOME_FOLDER}' not empty. We therefore will benefit from the CI cache"
+else
+    echo "WARN - No M2 folder '${M2_HOME_FOLDER}' found. We therefore won't benefit from the CI cache"
 fi
 
 # Filter the branch to execute the release on
@@ -99,7 +89,7 @@ else
   echo "GPG signing is not enabled"
 fi
 
-#Setup SSH key
+# Setup SSH key
 if [[ -n "${SSH_PRIVATE_KEY}" ]]; then
   echo "Add SSH key"
   add-ssh-key.sh
@@ -116,6 +106,14 @@ fi
 # Setup the server credentials in the settings.xml
 setup-maven-servers.sh
 
+# Copy default Maven settings
+echo "Copy default Maven settings.xml"
+# cp /usr/share/java/maven-3/conf/settings.xml ~/.m2/settings.xml
+
+cp /usr/share/java/maven-3/conf/settings.xml /root/.m2/settings.xml
+
+# mvn help:effective-settings
+
 APP_VERSION=`xmllint --xpath '/*[local-name()="project"]/*[local-name()="version"]/text()' pom.xml`
 #verify we are not on a release tag
 if [[ "$APP_VERSION" == *0 ]]; then 
@@ -123,7 +121,6 @@ if [[ "$APP_VERSION" == *0 ]]; then
      mvn  build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT
      git commit -am "Prepare version for next release"
 fi
-
 
 # Setup next version
 if [[ -n "$MAVEN_DEVELOPMENT_VERSION_NUMBER" ]]; then

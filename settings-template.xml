@@ -3,15 +3,12 @@
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
                           https://maven.apache.org/xsd/settings-1.0.0.xsd">
     <localRepository>${M2_HOME_FOLDER}/repository</localRepository>
+    <mirrors>
+        ${MAVEN_MIRRORS_XML}
+    </mirrors>
     <servers>
-        <server>
-            <id>${env.DOCKER_REGISTRY_ID}</id>
-            <username>${env.DOCKER_REGISTRY_USERNAME}</username>
-            <password>${env.DOCKER_REGISTRY_PASSWORD}</password>
-        </server>
-${MAVEN_SERVERS_XML}
+        ${MAVEN_SERVERS_XML}
     </servers>
-
     <profiles>
         <!-- GPG settings -->
         <profile>
@@ -24,8 +21,17 @@ ${MAVEN_SERVERS_XML}
                 <!-- Load passphrase from env variable -->
                 <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
                 <gpg.keyname>${env.GPG_KEY_ID}</gpg.keyname>
-
+            </properties>
+        </profile>
+        <profile>
+            <id>extended-timeouts</id>
+            <properties>
+                <http.connectionTimeout>300000</http.connectionTimeout> <!-- Timeout in milliseconds (60 seconds) -->
+                <http.socketTimeout>120000</http.socketTimeout> <!-- Timeout in milliseconds (120 seconds) -->
             </properties>
         </profile>
     </profiles>
+    <activeProfiles>
+        <activeProfile>extended-timeouts</activeProfile>
+    </activeProfiles>
 </settings>
