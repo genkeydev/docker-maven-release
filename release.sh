@@ -156,8 +156,8 @@ else
 fi
 
 # Download all dependencies before release process begins
-echo "Do mvn dependency:go-offline with options $MAVEN_OPTION and arguments $MAVEN_ARGS"
-mvn $MAVEN_OPTION $MAVEN_REPO_LOCAL dependency:go-offline -B -Darguments="$MAVEN_ARGS"
+#echo "Do mvn dependency:go-offline with options $MAVEN_OPTION and arguments $MAVEN_ARGS"
+#mvn $MAVEN_OPTION $MAVEN_REPO_LOCAL dependency:go-offline -B -Darguments="$MAVEN_ARGS"
 
 # Do the release
 echo "Do mvn release:prepare with options $MAVEN_OPTION and arguments $MAVEN_ARGS"

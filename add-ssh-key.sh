@@ -6,7 +6,7 @@ GIT_SSH=/usr/bin/ssh
 
 echo "Do a SSH add with the key under env 'SSH_PRIVATE_KEY'"
 mkdir -p ${SSH_ROOT_FOLDER}/
-echo "$SSH_PRIVATE_KEY"
+#echo "$SSH_PRIVATE_KEY"
 echo "$SSH_PRIVATE_KEY" | base64 -d > ${SSH_ROOT_FOLDER}/id_rsa
 #echo "$SSH_PRIVATE_KEY"==== | fold -w 4 | sed '$ d' | tr -d '\n' | base64 -di > ${SSH_ROOT_FOLDER}/id_rsa
 chmod 600 ${SSH_ROOT_FOLDER}/id_rsa
