@@ -43,6 +43,19 @@ RUN apt-get -qq update && \
 
 ENV JAVA_HOME=/usr/lib/jvm/zulu-fx-8-amd64
 
+# ---------------------------------------
+# Install JDK 21 (Temurin)
+# ---------------------------------------
+# Install dependencies and OpenJDK 21
+RUN apt-get update && apt-get install -y \
+    curl wget gnupg ca-certificates apt-transport-https bash git unzip software-properties-common locales && \
+    mkdir -p /opt/java/openjdk21 && \
+    curl -L -o /tmp/openjdk21.tar.gz https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.7%2B6/OpenJDK21U-jdk_x64_linux_hotspot_21.0.7_6.tar.gz && \
+    tar -xzf /tmp/openjdk21.tar.gz -C /opt/java/openjdk21 --strip-components=1 && \
+    rm /tmp/openjdk21.tar.gz
+
+ENV JAVA21_HOME=/opt/java/openjdk21
+
 # Install Git LFS
 RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash \
     && apt-get update && apt-get install -y git-lfs
