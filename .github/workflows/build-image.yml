@@ -2,8 +2,8 @@ name: Build and Push Docker Image
 
 on:
   push:
-    branches:
-      - master
+    tags:
+      - 'v*'  # Triggers when pushing tags like v1.0.0, v2.1.3, etc
 
 jobs:
   build:
@@ -23,9 +23,27 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Read version from VERSION file
+        id: vars
+        run: |
+          # If the VERSION file exists, get the version
+          if [ -f VERSION ]; then
+            VERSION=$(cat VERSION)
+            echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          else
+            echo "VERSION=latest" >> $GITHUB_ENV
+          fi
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/docker-maven-release:latest
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/docker-maven-release:latest
+            ghcr.io/${{ github.repository_owner }}/docker-maven-release:${{ env.VERSION }}
+            ghcr.io/${{ github.repository_owner }}/docker-maven-release:${{ github.ref_name }}  # Git tag version, e.g., v1.0.0
+
+      - name: Image pushed successfully
+        run: |
+          echo "Docker image has been pushed successfully with version: ${{ env.VERSION }}"
