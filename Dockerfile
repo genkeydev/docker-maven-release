@@ -56,6 +56,16 @@ RUN apt-get update && apt-get install -y \
 
 ENV JAVA21_HOME=/opt/java/openjdk21
 
+# ---------------------------------------
+# Install JDK 25 (Temurin)
+# ---------------------------------------
+RUN mkdir -p /opt/java/openjdk25 && \
+    curl -L -o /tmp/openjdk25.tar.gz https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.2%2B10/OpenJDK25U-jdk_x64_linux_hotspot_25.0.2_10.tar.gz && \
+    tar -xzf /tmp/openjdk25.tar.gz -C /opt/java/openjdk25 --strip-components=1 && \
+    rm /tmp/openjdk25.tar.gz
+
+ENV JAVA25_HOME=/opt/java/openjdk25
+
 # Install Git LFS
 RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash \
     && apt-get update && apt-get install -y git-lfs
